@@ -8,9 +8,6 @@
           <element id="javaee-facet-classes" facet="Java_Web/web/Web" />
         </element>
       </element>
-      <element id="javaee-facet-resources" facet="Java_Web/web/Web" />
-      <element id="javaee-facet-resources" facet="Java_Web/web/Web" />
-      <element id="javaee-facet-resources" facet="Java_Web/web/Web" />
     </root>
   </artifact>
 </component>

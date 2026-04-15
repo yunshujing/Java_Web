@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>合作服务 - 视界无限影视工作室</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cooperation.css">
+    <style>
+        :root {
+            --primary-color: #2D3748;
+            --secondary-color: #4A5568;
+            --accent-color: #3B82F6;
+            --accent-hover: #2563EB;
+            --background-light: #FFFFFF;
+            --background-dark: #111827;
+            --text-light: #1F2937;
+            --text-dark: #F9FAFB;
+            --gradient-start: #3B82F6;
+            --gradient-mid: #8B5CF6;
+            --gradient-end: #EC4899;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            transition: all 0.5s ease;
+            overflow-x: hidden;
+        }
+
+        .dark-mode {
+            background-color: var(--background-dark);
+            color: var(--text-dark);
+        }
+
+        .light-mode {
+            background-color: var(--background-light);
+            color: var(--text-light);
+        }
+
+        .navbar {
+            transition: all 0.5s ease;
+            padding: 0.6rem 0;
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 0;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .navbar.scrolled {
+            background-color: rgba(17, 24, 39, 0.95);
+        }
+
+        .site-logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-shadow {
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .sidebar {
+            transform: translateX(-100%);
+            transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dark-mode .sidebar {
+            background: rgba(17, 24, 39, 0.8);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .light-mode .sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        
+        /* 添加侧边栏遮罩 */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 39;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu-item {
+            position: relative;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .menu-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: var(--accent-color);
+            border-radius: 8px 0 0 8px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover::before {
+            width: 4px;
+        }
+
+        /* 改善侧边栏暗模式下的文字对比度 */
+        .dark-mode .sidebar .menu-item {
+            color: white;
+        }
+        
+        .dark-mode .sidebar a {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .dark-mode .sidebar a:hover {
+            color: rgba(59, 130, 246, 1);
+        }
+
+        /* Toggle Button Animation */
+        .menu-toggle {
+            width: 30px;
+            height: 30px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: currentColor;
+            border-radius: 2px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle span:nth-child(1) {
+            top: 8px;
+        }
+
+        .menu-toggle span:nth-child(2), .menu-toggle span:nth-child(3) {
+            top: 16px;
+        }
+
+        .menu-toggle span:nth-child(4) {
+            top: 24px;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            top: 16px;
+            width: 0%;
+            left: 50%;
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            transform: rotate(45deg);
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg);
+        }
+
+        .menu-toggle.active span:nth-child(4) {
+            top: 16px;
+            width: 0%;
+            left: 50%;
+        }
+
+        /* Theme toggle switch */
+        .theme-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .theme-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .dark-mode .theme-switch {
+            background: rgba(59, 130, 246, 0.6);
+        }
+
+        .dark-mode .theme-switch::after {
+            transform: translateX(30px);
+            background: var(--background-dark);
+        }
+
+        /* 服务卡片样式 */
+        .service-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .dark-mode .service-card {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: var(--accent-color);
+        }
+
+        .service-image {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-image img {
+            transition: transform 0.5s ease;
+        }
+
+        .service-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .service-icon {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            opacity: 0.9;
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.1) rotate(10deg);
+            background: rgba(59, 130, 246, 0.7);
+        }
+
+        .cta-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            z-index: 1;
+        }
+
+        .cta-button:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-mid));
+            transition: all 0.5s ease;
+            z-index: -1;
+        }
+
+        .cta-button:hover:before {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- 导航栏 -->
+    <nav id="navbar" class="navbar fixed w-full z-50 transition-all">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center h-12">
+                <!-- 左侧功能区 -->
+                <div class="flex items-center">
+                    <!-- 侧边栏按钮 -->
+                    <div id="sidebar-toggle" class="menu-toggle text-white hover:text-blue-300 transition-colors">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                
+                <!-- Logo (居中) -->
+                <div class="flex-1 flex justify-center">
+                    <a href="index.html" class="site-logo inline-flex items-center">
+                        <span class="text-white logo-shadow">视界</span>
+                        <span class="gradient-text logo-shadow ml-1">无限</span>
+                    </a>
+                </div>
+
+                <!-- 右侧功能区 -->
+                <div class="flex items-center space-x-4">
+                    <!-- 登录按钮 -->
+                    <a href="login.html" class="cta-button bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-all shadow-lg text-sm font-medium">
+                        登录
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 侧边栏 -->
+    <div id="sidebar" class="sidebar fixed top-0 left-0 h-full w-72 shadow-lg z-40">
+        <div class="p-6 h-full flex flex-col">
+            <div class="flex justify-between items-center mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">菜单导航</h2>
+                <button id="close-sidebar" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <ul class="space-y-2 flex-1">
+                <li>
+                    <a href="materials.html" class="menu-item flex items-center text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
+                        <i class="fas fa-photo-film mr-3 text-lg"></i>
+                        <span>素材购买</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="cooperation.html" class="menu-item flex items-center text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
+                        <i class="fas fa-video mr-3 text-lg"></i>
+                        <span>专业拍摄</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="cooperation.html" class="menu-item flex items-center text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
+                        <i class="fas fa-film mr-3 text-lg"></i>
+                        <span>后期剪辑</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="cooperation.html" class="menu-item flex items-center text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
+                        <i class="fas fa-camera mr-3 text-lg"></i>
+                        <span>器材推荐</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="cooperation.html" class="menu-item flex items-center text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
+                        <i class="fas fa-users mr-3 text-lg"></i>
+                        <span>人才招聘</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="cooperation.html" class="menu-item flex items-center text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
+                        <i class="fas fa-envelope mr-3 text-lg"></i>
+                        <span>联系我们</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="mt-auto pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center text-gray-600 dark:text-gray-400">
+                    <i class="fas fa-headset mr-3"></i>
+                    <span>客服热线: 2023014380</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 侧边栏遮罩 -->
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <!-- 页面标题 -->
+    <section class="pt-24 pb-12 bg-gray-50 dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl md:text-5xl font-bold text-center mb-4">合作服务</h1>
+            <p class="text-xl text-gray-600 dark:text-gray-300 text-center">专业的影视制作服务，为您提供一站式解决方案</p>
+        </div>
+    </section>
+
+    <!-- 专业拍摄服务 -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">专业拍摄服务</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
+                <!-- 宣传片 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/corporate-video.jpg" alt="宣传片" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fas fa-film"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">宣传片拍摄</h3>
+                        <p class="text-gray-600 dark:text-gray-300">专业的企业宣传片、产品宣传片拍摄，展现品牌价值</p>
+                    </div>
+                </div>
+
+                <!-- 抖音短视频 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/douyin.jpg" alt="抖音短视频" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fab fa-tiktok"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">抖音短视频</h3>
+                        <p class="text-gray-600 dark:text-gray-300">创意短视频制作，助力品牌营销</p>
+                    </div>
+                </div>
+
+                <!-- 广告拍摄 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/ad.jpg" alt="广告拍摄" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fas fa-ad"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">广告拍摄</h3>
+                        <p class="text-gray-600 dark:text-gray-300">专业广告片拍摄，提升品牌形象</p>
+                    </div>
+                </div>
+
+                <!-- 短剧拍摄 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/short-drama.jpg" alt="短剧拍摄" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">短剧拍摄</h3>
+                        <p class="text-gray-600 dark:text-gray-300">创意短剧制作，打造优质内容</p>
+                    </div>
+                </div>
+
+                <!-- 影视拍摄 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/film.jpg" alt="影视拍摄" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fas fa-film"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">影视拍摄</h3>
+                        <p class="text-gray-600 dark:text-gray-300">专业影视剧拍摄，打造精品内容</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 剪辑服务 -->
+    <section class="py-16 bg-gray-50 dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">专业剪辑服务</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
+                <!-- 活动快剪 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/event-edit.jpg" alt="活动快剪" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fas fa-cut"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">活动快剪</h3>
+                        <p class="text-gray-600 dark:text-gray-300">活动现场快速剪辑，及时呈现精彩瞬间</p>
+                    </div>
+                </div>
+
+                <!-- 抖音短视频剪辑 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/douyin-edit.jpg" alt="抖音短视频剪辑" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fab fa-tiktok"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">抖音短视频</h3>
+                        <p class="text-gray-600 dark:text-gray-300">短视频创意剪辑，提升内容质量</p>
+                    </div>
+                </div>
+
+                <!-- 影视级剪辑 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/film-edit.jpg" alt="影视级剪辑" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fas fa-film"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">影视级剪辑</h3>
+                        <p class="text-gray-600 dark:text-gray-300">专业影视后期制作，打造精品内容</p>
+                    </div>
+                </div>
+
+                <!-- 直播切片 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/live-edit.jpg" alt="直播切片" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fas fa-cut"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">直播切片</h3>
+                        <p class="text-gray-600 dark:text-gray-300">直播内容精剪，突出精彩片段</p>
+                    </div>
+                </div>
+
+                <!-- 广告剪辑 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/ad-edit.jpg" alt="广告剪辑" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fas fa-ad"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">广告剪辑</h3>
+                        <p class="text-gray-600 dark:text-gray-300">专业广告片剪辑，提升品牌形象</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 直播服务 -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">专业直播服务</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
+                <!-- 抖音直播 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/douyin-live.jpg" alt="抖音直播" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fab fa-tiktok"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">抖音直播</h3>
+                        <p class="text-gray-600 dark:text-gray-300">专业抖音直播服务，提升品牌曝光</p>
+                    </div>
+                </div>
+
+                <!-- 快手直播 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/kuaishou-live.jpg" alt="快手直播" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">快手直播</h3>
+                        <p class="text-gray-600 dark:text-gray-300">快手平台直播服务，扩大受众群体</p>
+                    </div>
+                </div>
+
+                <!-- B站直播 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/bilibili-live.jpg" alt="B站直播" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fab fa-bilibili"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">B站直播</h3>
+                        <p class="text-gray-600 dark:text-gray-300">B站直播服务，打造优质内容</p>
+                    </div>
+                </div>
+
+                <!-- 虎牙直播 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/huya-live.jpg" alt="虎牙直播" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">虎牙直播</h3>
+                        <p class="text-gray-600 dark:text-gray-300">虎牙平台直播服务，拓展业务范围</p>
+                    </div>
+                </div>
+
+                <!-- 斗鱼直播 -->
+                <div class="service-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="service-image">
+                        <img src="img/cooperation/douyu-live.jpg" alt="斗鱼直播" class="w-full h-48 object-cover">
+                        <div class="service-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-4">斗鱼直播</h3>
+                        <p class="text-gray-600 dark:text-gray-300">斗鱼平台直播服务，扩大影响力</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系我们 -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">联系我们</h2>
+            <div class="max-w-2xl mx-auto text-center">
+                <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">
+                    如果您对我们的服务感兴趣，请随时联系我们，我们将为您提供专业的咨询和建议。
+                </p>
+                <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
+                    <a href="tel:2023014380" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-phone mr-2"></i>电话咨询
+                    </a>
+                    <a href="mailto:contact@visionunlimited.com" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors">
+                        <i class="fas fa-envelope mr-2"></i>邮件咨询
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">视界无限影视工作室</h3>
+                    <p class="text-gray-400">专业的影视制作服务提供商</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">联系方式</h3>
+                    <p class="text-gray-400">电话：2023014380</p>
+                    <p class="text-gray-400">邮箱：计算机23A2钱啸杰</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">关注我们</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-weixin"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-weibo"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-bilibili"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
+                <p>&copy; 2026 视界无限影视工作室. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 确保总是使用日间模式
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.remove('dark-mode');
+            document.body.classList.add('light-mode');
+            localStorage.setItem('theme', 'light');
+        });
+
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // 侧边栏切换
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const closeSidebar = document.getElementById('close-sidebar');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        // 打开侧边栏
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            sidebarToggle.classList.add('active');
+            document.body.style.overflow = 'hidden'; // 防止背景滚动
+        });
+
+        // 关闭侧边栏函数
+        function closeSidebarFunc() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            sidebarToggle.classList.remove('active');
+            document.body.style.overflow = ''; // 恢复滚动
+        }
+
+        // 关闭侧边栏（通过按钮）
+        closeSidebar.addEventListener('click', closeSidebarFunc);
+
+        // 点击遮罩关闭侧边栏
+        sidebarOverlay.addEventListener('click', closeSidebarFunc);
+
+        // 服务卡片动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const serviceCards = document.querySelectorAll('.service-card');
+            
+            serviceCards.forEach((card, index) => {
+                // 添加延迟动画效果
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = `all 0.5s ease ${index * 0.1}s`;
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 视界无限影视工作室</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2D3748;
+            --secondary-color: #4A5568;
+            --accent-color: #4299E1;
+            --background-light: #FFFFFF;
+            --background-dark: #1A202C;
+            --text-light: #2D3748;
+            --text-dark: #F7FAFC;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            transition: all 0.3s ease;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .dark-mode {
+            --bg-primary: #121212;
+            --bg-secondary: #1f1f1f;
+            --text-primary: #f5f5f5;
+            --text-secondary: #b3b3b3;
+            --accent: #4299E1;
+            --border: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(30, 30, 30, 0.7);
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .light-mode {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --accent: #4299E1;
+            --border: rgba(0, 0, 0, 0.1);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-page {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .login-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4)), url('img/cooperation/corporate-video.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--accent), transparent);
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .shape-1 {
+            width: 500px;
+            height: 500px;
+            top: -200px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            bottom: -150px;
+            right: -100px;
+            animation-delay: 2s;
+            background: linear-gradient(45deg, #8B5CF6, transparent);
+        }
+
+        .shape-3 {
+            width: 300px;
+            height: 300px;
+            top: 40%;
+            left: 20%;
+            animation-delay: 4s;
+            background: linear-gradient(45deg, #EC4899, transparent);
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(30px, 20px) rotate(5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 460px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 40px;
+            z-index: 10;
+            position: relative;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .card-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            font-family: 'Noto Serif SC', serif;
+        }
+
+        .card-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .input-icon {
+            display: none; /* Hide the icons */
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box; /* Ensure padding doesn't increase width */
+        }
+
+        .input-field::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            accent-color: var(--accent);
+        }
+
+        .checkbox-group label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .forgot-password {
+            color: var(--accent);
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4299E1, #3182CE);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(66, 153, 225, 0.3);
+        }
+
+        .login-button:hover {
+            background: linear-gradient(135deg, #3182CE, #2B6CB0);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(66, 153, 225, 0.4);
+        }
+
+        .login-divider {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background-color: var(--border);
+        }
+
+        .divider-text {
+            padding: 0 15px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .social-login {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .social-button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .social-button:hover {
+            transform: translateY(-3px);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .social-button i {
+            font-size: 1.5rem;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .register-link a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            color: white;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-link i {
+            margin-right: 5px;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .login-card {
+                max-width: 90%;
+                padding: 30px;
+            }
+            .card-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <div class="login-page">
+        <!-- 浮动形状背景 -->
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> 返回首页
+        </a>
+
+        <div class="login-content" id="login-background">
+            <div class="login-card">
+                <div class="card-header">
+                    <h1>欢迎回来</h1>
+                    <p>登录您的视界无限账户</p>
+                </div>
+
+                <form>
+                    <div class="input-group">
+                        <label for="email">用户名/邮箱</label>
+                        <span class="input-icon">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        <input type="email" id="email" class="input-field" placeholder="请输入您的用户名或邮箱" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">密码</label>
+                        <span class="input-icon">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input type="password" id="password" class="input-field" placeholder="请输入您的密码" required>
+                    </div>
+
+                    <div class="form-options">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="remember">
+                            <label for="remember">记住我</label>
+                        </div>
+                        <a href="#" class="forgot-password">忘记密码?</a>
+                    </div>
+
+                    <button type="submit" class="login-button">登录</button>
+
+                    <div class="login-divider">
+                        <div class="divider-line"></div>
+                        <span class="divider-text">或使用</span>
+                        <div class="divider-line"></div>
+                    </div>
+
+                    <div class="social-login">
+                        <button type="button" class="social-button">
+                            <i class="fab fa-weixin text-green-500"></i>
+                        </button>
+                        <button type="button" class="social-button">
+                            <i class="fab fa-qq text-blue-500"></i>
+                        </button>
+                        <button type="button" class="social-button">
+                            <i class="fab fa-weibo text-red-500"></i>
+                        </button>
+                    </div>
+
+                    <div class="register-link">
+                        还没有账户? <a href="#">立即注册</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 随机背景图片
+        const backgroundImages = [
+            'img/cooperation/corporate-video.jpg',
+            'img/cooperation/douyin.jpg',
+            'img/cooperation/ad.jpg',
+            'img/cooperation/short-drama.jpg',
+            'img/cooperation/film-edit.jpg',
+            'img/cooperation/douyin-edit.jpg',
+            'img/materials/city-aerial.jpg',
+            'img/materials/business-meeting.jpg',
+            'img/materials/nature-scene.jpg',
+            'img/materials/tech-transition.jpg'
+        ];
+        
+        function setRandomBackground() {
+            const randomIndex = Math.floor(Math.random() * backgroundImages.length);
+            const selectedImage = backgroundImages[randomIndex];
+            document.getElementById('login-background').style.backgroundImage = `linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4)), url('${selectedImage}')`;
+        }
+        
+        // 页面加载时设置随机背景和确保使用日间模式
+        window.addEventListener('DOMContentLoaded', function() {
+            setRandomBackground();
+            
+            // 确保总是使用日间模式
+            document.body.classList.remove('dark-mode');
+            document.body.classList.add('light-mode');
+            localStorage.setItem('theme', 'light');
+        });
+    </script>
+</body>
+</html> 

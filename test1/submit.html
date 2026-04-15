@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作品投稿 - 视界无限影视工作室</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2D3748;
+            --secondary-color: #4A5568;
+            --accent-color: #3B82F6;
+            --accent-hover: #2563EB;
+            --background-light: #FFFFFF;
+            --background-dark: #111827;
+            --text-light: #1F2937;
+            --text-dark: #F9FAFB;
+            --gradient-start: #3B82F6;
+            --gradient-mid: #8B5CF6;
+            --gradient-end: #EC4899;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            transition: all 0.5s ease;
+            overflow-x: hidden;
+        }
+
+        .dark-mode {
+            background-color: var(--background-dark);
+            color: var(--text-dark);
+        }
+
+        .light-mode {
+            background-color: var(--background-light);
+            color: var(--text-light);
+        }
+
+        .navbar {
+            transition: all 0.5s ease;
+            padding: 0.6rem 0;
+            backdrop-filter: blur(10px);
+            background-color: rgba(0, 0, 0, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 0;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .navbar.scrolled {
+            background-color: rgba(17, 24, 39, 0.95);
+        }
+
+        .site-logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-shadow {
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .sidebar {
+            transform: translateX(-100%);
+            transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dark-mode .sidebar {
+            background: rgba(17, 24, 39, 0.8);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .light-mode .sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            border-right: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        
+        /* 添加侧边栏遮罩 */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 39;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu-item {
+            position: relative;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .menu-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: var(--accent-color);
+            border-radius: 8px 0 0 8px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover::before {
+            width: 4px;
+        }
+
+        /* 改善侧边栏暗模式下的文字对比度 */
+        .dark-mode .sidebar .menu-item {
+            color: white;
+        }
+        
+        .dark-mode .sidebar a {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .dark-mode .sidebar a:hover {
+            color: rgba(59, 130, 246, 1);
+        }
+
+        /* Toggle Button Animation */
+        .menu-toggle {
+            width: 30px;
+            height: 30px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: currentColor;
+            border-radius: 2px;
+            opacity: 1;
+            left: 0;
+            transform: rotate(0deg);
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle span:nth-child(1) {
+            top: 8px;
+        }
+
+        .menu-toggle span:nth-child(2), .menu-toggle span:nth-child(3) {
+            top: 16px;
+        }
+
+        .menu-toggle span:nth-child(4) {
+            top: 24px;
+        }
+
+        .menu-toggle.active span:nth-child(1) {
+            top: 16px;
+            width: 0%;
+            left: 50%;
+        }
+
+        .menu-toggle.active span:nth-child(2) {
+            transform: rotate(45deg);
+        }
+
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg);
+        }
+
+        .menu-toggle.active span:nth-child(4) {
+            top: 16px;
+            width: 0%;
+            left: 50%;
+        }
+
+        /* Theme toggle switch */
+        .theme-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .theme-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .dark-mode .theme-switch {
+            background: rgba(59, 130, 246, 0.6);
+        }
+
+        .dark-mode .theme-switch::after {
+            transform: translateX(30px);
+            background: var(--background-dark);
+        }
+
+        /* 上传区域样式 */
+        .upload-area {
+            border: 2px dashed #CBD5E0;
+            transition: all 0.3s ease;
+            position: relative;
+            border-radius: 16px;
+        }
+
+        .dark-mode .upload-area {
+            border-color: #4A5568;
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-color);
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent-color);
+            background-color: rgba(59, 130, 246, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-area i {
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover i {
+            transform: translateY(-5px);
+            color: var(--accent-color);
+        }
+
+        /* 规则项样式 */
+        .rule-item {
+            position: relative;
+            padding-left: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .rule-item::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            transition: all 0.3s ease;
+        }
+
+        .rule-item:hover::before {
+            transform: scale(1.2);
+            left: 3px;
+        }
+
+        .cta-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+            z-index: 1;
+        }
+
+        .cta-button:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-mid));
+            transition: all 0.5s ease;
+            z-index: -1;
+        }
+
+        .cta-button:hover:before {
+            width: 100%;
+        }
+
+        /* 表单样式增强 */
+        input[type="text"], textarea {
+            transition: all 0.3s ease;
+            border-color: #E2E8F0;
+        }
+
+        .dark-mode input[type="text"], .dark-mode textarea {
+            border-color: #4A5568;
+            background-color: rgba(26, 32, 44, 0.8);
+            color: #E2E8F0;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+            outline: none;
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <!-- 导航栏 -->
+    <nav id="navbar" class="navbar fixed w-full z-50 transition-all">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center h-12">
+                <!-- 左侧功能区 -->
+                <div class="flex items-center">
+                    <!-- 侧边栏按钮 -->
+                    <div id="sidebar-toggle" class="menu-toggle text-white hover:text-blue-300 transition-colors">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                
+                <!-- Logo (居中) -->
+                <div class="flex-1 flex justify-center">
+                    <a href="index.html" class="site-logo inline-flex items-center">
+                        <span class="text-white logo-shadow">视界</span>
+                        <span class="gradient-text logo-shadow ml-1">无限</span>
+                    </a>
+                </div>
+
+                <!-- 右侧功能区 -->
+                <div class="flex items-center space-x-4">
+                    <!-- 登录按钮 -->
+                    <a href="login.html" class="cta-button bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition-all shadow-lg text-sm font-medium">
+                        登录
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 侧边栏 -->
+    <div id="sidebar" class="sidebar fixed top-0 left-0 h-full w-72 shadow-lg z-40">
+        <div class="p-6 h-full flex flex-col">
+            <div class="flex justify-between items-center mb-10">
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-white">菜单导航</h2>
+                <button id="close-sidebar" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <ul class="space-y-2 flex-1">
+                <li>
+                    <a href="materials.html" class="menu-item flex items-center text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
+                        <i class="fas fa-photo-film mr-3 text-lg"></i>
+                        <span>素材购买</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="cooperation.html" class="menu-item flex items-center text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
+                        <i class="fas fa-video mr-3 text-lg"></i>
+                        <span>专业拍摄</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="cooperation.html" class="menu-item flex items-center text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
+                        <i class="fas fa-film mr-3 text-lg"></i>
+                        <span>后期剪辑</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="cooperation.html" class="menu-item flex items-center text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
+                        <i class="fas fa-camera mr-3 text-lg"></i>
+                        <span>器材推荐</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="cooperation.html" class="menu-item flex items-center text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
+                        <i class="fas fa-users mr-3 text-lg"></i>
+                        <span>人才招聘</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="cooperation.html" class="menu-item flex items-center text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400">
+                        <i class="fas fa-envelope mr-3 text-lg"></i>
+                        <span>联系我们</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="mt-auto pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center text-gray-600 dark:text-gray-400">
+                    <i class="fas fa-headset mr-3"></i>
+                    <span>客服热线: 2023014380</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 侧边栏遮罩 -->
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <!-- 页面标题 -->
+    <section class="pt-24 pb-12 bg-gray-50 dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl md:text-5xl font-bold text-center mb-4">作品投稿</h1>
+            <p class="text-xl text-gray-600 dark:text-gray-300 text-center">分享您的创意，展示您的才华</p>
+        </div>
+    </section>
+
+    <!-- 投稿区域 -->
+    <section class="py-16">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- 普通投稿 -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                    <h2 class="text-2xl font-bold mb-6">普通投稿</h2>
+                    <div class="upload-area rounded-lg p-8 text-center cursor-pointer mb-6">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600 dark:text-gray-300 mb-2">拖拽文件到此处或点击上传</p>
+                        <p class="text-sm text-gray-500">支持 MP4, MOV, AVI 格式，单个文件不超过500MB</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <input type="text" placeholder="作品标题" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700">
+                        </div>
+                        <div class="flex items-center">
+                            <textarea placeholder="作品描述" rows="3" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700"></textarea>
+                        </div>
+                        <button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            提交作品
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 商单投稿 -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                    <h2 class="text-2xl font-bold mb-6">商单投稿</h2>
+                    <div class="upload-area rounded-lg p-8 text-center cursor-pointer mb-6">
+                        <i class="fas fa-briefcase text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-600 dark:text-gray-300 mb-2">拖拽文件到此处或点击上传</p>
+                        <p class="text-sm text-gray-500">支持 MP4, MOV, AVI 格式，单个文件不超过1GB</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <input type="text" placeholder="项目名称" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700">
+                        </div>
+                        <div class="flex items-center">
+                            <input type="text" placeholder="客户名称" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700">
+                        </div>
+                        <div class="flex items-center">
+                            <textarea placeholder="项目需求描述" rows="3" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700"></textarea>
+                        </div>
+                        <button class="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors">
+                            提交商单
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 投稿规则 -->
+    <section class="py-16 bg-gray-50 dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">投稿规则</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4">基本要求</h3>
+                    <ul class="space-y-3">
+                        <li class="rule-item">作品必须为原创，不得抄袭或盗用他人作品</li>
+                        <li class="rule-item">视频分辨率不低于1920x1080</li>
+                        <li class="rule-item">视频时长不超过10分钟</li>
+                        <li class="rule-item">文件大小不超过500MB</li>
+                        <li class="rule-item">支持MP4、MOV、AVI等常见格式</li>
+                    </ul>
+                </div>
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-4">水印要求</h3>
+                    <ul class="space-y-3">
+                        <li class="rule-item">视频右下角需添加工作室水印</li>
+                        <li class="rule-item">水印大小不超过视频宽度的10%</li>
+                        <li class="rule-item">水印透明度建议设置为30%</li>
+                        <li class="rule-item">水印位置固定，不得移动或旋转</li>
+                        <li class="rule-item">水印颜色建议使用白色或浅色</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">视界无限影视工作室</h3>
+                    <p class="text-gray-400">专业的影视制作服务提供商</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">联系方式</h3>
+                    <p class="text-gray-400">电话：2023014380</p>
+                    <p class="text-gray-400">邮箱：计算机23A2钱啸杰</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">关注我们</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-weixin"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-weibo"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-bilibili"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
+                <p>&copy; 2026 视界无限影视工作室. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 确保总是使用日间模式
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.classList.remove('dark-mode');
+            document.body.classList.add('light-mode');
+            localStorage.setItem('theme', 'light');
+            
+            // 文件上传区域交互设置
+            const uploadAreas = document.querySelectorAll('.upload-area');
+            
+            uploadAreas.forEach(area => {
+                // 拖拽事件处理
+                area.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('dragover');
+                });
+                
+                area.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+                });
+                
+                area.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+                    // 这里可以添加文件处理逻辑
+                    const files = e.dataTransfer.files;
+                    console.log('文件已上传:', files);
+                    // 显示文件名
+                    if (files.length > 0) {
+                        const fileInfo = document.createElement('p');
+                        fileInfo.className = 'text-sm text-blue-600 dark:text-blue-400 mt-2';
+                        fileInfo.textContent = `已选择: ${files[0].name}`;
+                        
+                        // 移除之前的文件信息
+                        const prevInfo = this.querySelector('.text-blue-600');
+                        if (prevInfo) {
+                            prevInfo.remove();
+                        }
+                        
+                        this.appendChild(fileInfo);
+                    }
+                });
+                
+                // 点击上传
+                area.addEventListener('click', function() {
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = 'video/mp4,video/mov,video/avi';
+                    fileInput.style.display = 'none';
+                    
+                    fileInput.addEventListener('change', function() {
+                        if (this.files.length > 0) {
+                            console.log('文件已选择:', this.files[0]);
+                            
+                            // 显示文件名
+                            const fileInfo = document.createElement('p');
+                            fileInfo.className = 'text-sm text-blue-600 dark:text-blue-400 mt-2';
+                            fileInfo.textContent = `已选择: ${this.files[0].name}`;
+                            
+                            // 移除之前的文件信息
+                            const prevInfo = area.querySelector('.text-blue-600');
+                            if (prevInfo) {
+                                prevInfo.remove();
+                            }
+                            
+                            area.appendChild(fileInfo);
+                        }
+                    });
+                    
+                    document.body.appendChild(fileInput);
+                    fileInput.click();
+                    
+                    // 清理DOM
+                    setTimeout(() => {
+                        document.body.removeChild(fileInput);
+                    }, 1000);
+                });
+            });
+        });
+
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // 侧边栏切换
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const closeSidebar = document.getElementById('close-sidebar');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        // 打开侧边栏
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            sidebarToggle.classList.add('active');
+            document.body.style.overflow = 'hidden'; // 防止背景滚动
+        });
+
+        // 关闭侧边栏函数
+        function closeSidebarFunc() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            sidebarToggle.classList.remove('active');
+            document.body.style.overflow = ''; // 恢复滚动
+        }
+
+        // 关闭侧边栏（通过按钮）
+        closeSidebar.addEventListener('click', closeSidebarFunc);
+
+        // 点击遮罩关闭侧边栏
+        sidebarOverlay.addEventListener('click', closeSidebarFunc);
+    </script>
+</body>
+</html> 
