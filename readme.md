@@ -23,9 +23,10 @@ Java_Web/
 │   ├── src/            ← Java 源代码
 │   ├── web/            ← 前端页面与 WEB-INF 配置
 │   └── readme.md       ← 作业说明文档
-├── test3/              ← 作业3：新作业（待开发）
-│   ├── src/            ← Java 源代码
-│   └── web/            ← 前端页面与 WEB-INF 配置
+├── test3/              ← 作业3：用户登录系统（Servlet + JSP + Cookie + Session + Filter）
+│   ├── src/            ← Java 源代码（Servlet、Filter、Bean）
+│   ├── web/            ← JSP 页面与 WEB-INF 配置
+│   └── readme.md       ← 作业说明文档
 └── readme.md           ← 本文件（项目总览）
 ```
 
@@ -37,7 +38,7 @@ Java_Web/
 |--------|---------|--------|------|
 | `test1/` | 视界无限影视工作室 | HTML5 + CSS3 + JavaScript | 已完成 |
 | `test2/` | 学生成绩录入系统 | Servlet + HTML | 已完成 |
-| `test3/` | 新作业 | 待定 | 待开发 |
+| `test3/` | 用户登录系统 | Servlet + JSP + Cookie + Session + Filter | 已完成 |
 
 ---
 
